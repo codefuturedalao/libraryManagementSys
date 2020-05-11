@@ -133,7 +133,7 @@ bool Item::UpdateData(){
 }	
 
 bool Item::ExistData(){
-	string sqlSearch = "select * from itemTable where itemId = '" + to_string(m_itemid) + "';";
+	string sqlSearch = "select * from itemTable where itemid = '" + to_string(m_itemid) + "';";
 	if(!mysql_query(&mysql,sqlSearch.c_str())){ //a query error occur
 		MYSQL_RES * result = mysql_use_result(&mysql);		
 		if(mysql_fetch_row(result) != NULL){ //there is a record in loan table
@@ -311,3 +311,59 @@ bool Title::ExistData(){
 
 Title::~Title(){
 }
+
+//Loan--------------------------------------------------------------
+Loan::Loan(int itemid,int borrowerid):m_itemid(itemid),m_borrowerid(borrowerid){
+
+}
+
+int Loan::GetItemId() const{
+	return m_itemid;
+}
+
+void Loan::SetItemId(int itemid){
+	m_itemid = itemid;
+}
+
+int Loan::GetBorrowerId() const{
+	return m_borrowerid;
+}
+
+void Loan::SetItemId(int borrowerid){
+	m_borrowerid = borrowerid;
+}
+
+bool Loan::StoreData(){
+	if(ExistData()){
+		std::cout<<"you cann't restore this loan, may be you need to update this data" << std::endl;
+		return false;
+	}else{
+		//store data in titleTable
+		string sql = "insert into loanTable(itemid,borrowerid) values('" + to_string(m_itemid) + "','"+ to_string(m_borrowerid) + "');";
+		if(mysql_query(&mysql,sql.c_str())){ //a query error occur
+			SQLERROR();
+		}
+		return true;
+	}
+}
+
+bool Loan::DeleteData(){
+	
+}
+bool Loan::UpdateData(){}
+bool Loan::ExistData(){
+	string sqlSearch = "select * from loanTable where loanid = '" + to_string(m_loanid) + "';";
+	if(!mysql_query(&mysql,sqlSearch.c_str())){ //a query error occur
+		MYSQL_RES * result = mysql_use_result(&mysql);		
+		if(mysql_fetch_row(result) != NULL){ //there is a record in loan table
+			mysql_free_result(result);
+			return true;
+		}else{
+			mysql_free_result(result);
+			return false;
+		}
+	}else{
+		SQLERROR();
+	}
+}
+
