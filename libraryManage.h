@@ -3,22 +3,28 @@
 #define SQLERROR();  std::cout<<"Query Error: " << mysql_error(&mysql) << std::endl; exit(-1);
 #include <iostream>
 #include <mysql/mysql.h>	//-lmysqlclient
+#include <list>
+#include <iterator>
+using std::list;
 using std::string;
+using std::to_string;
 class DBObject{
-	static MYSQL mysql;
-	static const string m_hostString = "localhost";
-	static const string m_userString = "root";
+	static const string m_hostString;
+	static const string m_userString;
 	static string m_passwordString;
 	static string m_DBNameString;
 	static int m_port;
+protected:
+	static MYSQL mysql;
 public:
 	DBObject(string DBNameString = "Library",string passwordString="",int port = 3306);
 	static void SetPassword(string passwordString);
-	static void setDBName(string DBNameString);
-	static void setPort(int port);
+	static void SetDBName(string DBNameString);
+	static void SetPort(int port);
 	virtual bool StoreData();
 	virtual bool DeleteData();
 	virtual bool UpdateData();
+	virtual bool ExistData();
 	~DBObject();
 };
 	
@@ -27,7 +33,7 @@ class Item : public DBObject{
 	int m_itemid;
 public:
 	Item(string titleName,int itemid);
-	bool isBorrowed() const;
+	bool IsBorrowed() const;
 	string GetTitleName() const;
 	void SetTitleName(string titleName);
 	int GetItemId() const;
@@ -35,6 +41,7 @@ public:
 	virtual bool StoreData();
 	virtual bool DeleteData();
 	virtual bool UpdateData();
+	virtual bool ExistData();
 	~Item();
 };
 class Title : public DBObject{
@@ -43,6 +50,7 @@ class Title : public DBObject{
 	list<Item *> m_item;
 public:
 	Title(string name,string author = "");
+	bool IsReserved();
 	void AddItem(Item * item);
 	void RemoveItem(Item * item);
 	void GetItemList(list<Item *> &itemList) const;
@@ -54,5 +62,10 @@ public:
 	virtual bool StoreData();
 	virtual bool DeleteData();
 	virtual bool UpdateData();
+	virtual bool ExistData();
 	~Title();
 };
+
+
+
+#endif
