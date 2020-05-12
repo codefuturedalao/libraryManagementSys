@@ -25,6 +25,7 @@ public:
 	virtual bool DeleteData();
 	virtual bool UpdateData();
 	virtual bool ExistData();
+	virtual bool LoadData();
 	~DBObject();
 };
 	
@@ -42,6 +43,7 @@ public:
 	virtual bool DeleteData();
 	virtual bool UpdateData();
 	virtual bool ExistData();
+	virtual bool LoadData(); //load data according to the itemid
 	~Item();
 };
 class Title : public DBObject{
@@ -63,6 +65,7 @@ public:
 	virtual bool DeleteData();
 	virtual bool UpdateData();
 	virtual bool ExistData();
+	virtual bool LoadData(); //load data according to the titlename
 	~Title();
 };
 
@@ -79,6 +82,7 @@ public:
 	virtual bool DeleteData();
 	virtual bool UpdateData();
 	virtual bool ExistData();
+	virtual bool LoadData(); //load data according to the itemid
 };
 
 class Reservation : public DBObject{
@@ -93,27 +97,29 @@ public:
 	virtual bool StoreData();
 	virtual bool DeleteData();
 	virtual bool UpdateData();
-	virtual bool ExistData();
+	virtual bool ExistData();//use borrowerid to check
+	virtual bool LoadData();//use borrowerid to check
 };
 
 class Borrower : public DBObject{
-	string borrowerid;
-	string password;
+	string m_borrowerid;
+	string m_password;
 	string m_name;
 	string m_sex;
 	string m_address;
 	string m_city;
 	list<Loan *> m_loans;
 	list<Reservation *> m_reservations;
-	bool isManager;
+	bool m_isManager;
 public:
 	Borrower(string borrowerid = "",string password,string name = "",string sex="male",string address = "LuoJia",string city = "WuHan");
-	void AddLoan(loan * loan);
-	void RemoveLoan(loan * loan);
-	void GetLoanList(list<Loan *> &loan_list) const;
+	bool LoginCheck();
+	void AddLoan(Loan * loan);
+	void RemoveLoan(Loan * loan);
+	void GetLoanList(list<Loan *> &loanList) const;
 	void AddReservation(Reservation * reservation);
 	void RemoveReservation(Reservation * reservation);
-	void GetReservationList(list<Reservation *> &reservation) const;
+	void GetReservationList(list<Reservation *> &reservationList) const;
 	void SetBorrowerId(string borrowerid);
 	string GetBorrowerId() const;
 	void SetPassword(string password);
@@ -126,10 +132,13 @@ public:
 	string GetAddress() const;
       	void SetCity(string city);
 	string GetCity() const;
+	void SetIsManager(bool isManager);
+	bool GetIsManager() const;
 	virtual bool StoreData();
 	virtual bool DeleteData();
 	virtual bool UpdateData();
 	virtual bool ExistData();
+	virtual bool LoadData();//load Data according to the borrowerid
 	~Borrower();
 };
 	

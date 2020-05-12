@@ -1,10 +1,21 @@
 class UI{
 	static Borrower user;
+	static void searchBook();
+	static void borrowBook();
+	static void returnBook();
+	static void reserveBook();
+	static void addTitle();
+	static void deleteTitle();
+	static void addItem();
+	static void deleteItem();
+	static void CheckInfo();
+	//static void SeeAllBooks();
 public:
-	static void printMainUI();
-	static void printLoginUI();
-	static void printRegisterUI();
-	static void loginCheck(string borrowerid,string password);
+	static void PrintMainUI();
+	static void PrintStartUI();
+	static void PrintLoginUI();
+	static void PrintRegisterUI();
+	static void PrintLeaveUI();
 	static void GetBorrower();
 };
 
