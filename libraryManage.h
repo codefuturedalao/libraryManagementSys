@@ -71,29 +71,29 @@ public:
 
 class Loan : public DBObject{
 	int m_itemid;
-	int m_borrowerid;
+	string m_borrowerid;
 public:
-	Loan(int itemid,int borrowerid);
+	Loan(int itemid,string borrowerid);
 	int GetItemId() const;
 	void SetItemId(int itemid);
-	int GetBorrowerId() const;
-	void SetItemId(int borrowerid);
+	string GetBorrowerId() const;
+	void SetBorrowerId(string borrowerid);
 	virtual bool StoreData();
 	virtual bool DeleteData();
 	virtual bool UpdateData();
-	virtual bool ExistData();
+	virtual bool ExistData();//use itemid to check
 	virtual bool LoadData(); //load data according to the itemid
 };
 
 class Reservation : public DBObject{
 	string m_titleName;
-	int m_borrowerid;
+	string m_borrowerid;
 public:
 	Reservation(string titleName,string borrowerid);
 	string GetTitleName() const;
 	void SetTitleName(string titleName);
-	int GetBorrowerId() const;
-	void SetBorrowerId(int borrowerid);
+	string GetBorrowerId() const;
+	void SetBorrowerId(string borrowerid);
 	virtual bool StoreData();
 	virtual bool DeleteData();
 	virtual bool UpdateData();
@@ -112,7 +112,7 @@ class Borrower : public DBObject{
 	list<Reservation *> m_reservations;
 	bool m_isManager;
 public:
-	Borrower(string borrowerid = "",string password,string name = "",string sex="male",string address = "LuoJia",string city = "WuHan");
+	Borrower(string borrowerid = "",string password = "",string name = "",string sex="male",string address = "LuoJia",string city = "WuHan");
 	bool LoginCheck();
 	void AddLoan(Loan * loan);
 	void RemoveLoan(Loan * loan);

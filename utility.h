@@ -1,3 +1,6 @@
+#ifndef UTILITY_H
+#define UTILITY_H
+#include "libraryManage.h"
 class UI{
 	static Borrower user;
 	static void searchBook();
@@ -8,7 +11,7 @@ class UI{
 	static void deleteTitle();
 	static void addItem();
 	static void deleteItem();
-	static void CheckInfo();
+	static void checkInfo();
 	//static void SeeAllBooks();
 public:
 	static void PrintMainUI();
@@ -19,3 +22,4 @@ public:
 	static void GetBorrower();
 };
 
+#endif
