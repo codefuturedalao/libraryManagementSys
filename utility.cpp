@@ -7,19 +7,19 @@ Borrower UI::user;
 void UI::PrintStartUI(){
 	char option;
 	system("clear");
-	cout << "\t\t\tWelcome to the library Management created by jacksonSang!" << endl;
+	cout << "\t\t\t\t\t\t\t\t\t\tWelcome to the library Management created by jacksonSang!" << endl;
 	cout<< endl << endl;
-	cout <<"if u have regiseted, please input 1 select log in." << endl;
-	cout <<"if u haven't registed, please input 2 select register." << endl;
-	cout << "if u want to leave now, please input other character" << endl;
+	cout <<"\t\t\t\t\t\t\t\t\t\tif u have regiseted, please input 1 select log in." << endl;
+	cout <<"\t\t\t\t\t\t\t\t\t\tif u haven't registed, please input 2 select register." << endl;
+	cout << "\t\t\t\t\t\t\t\t\t\tif u want to leave now, please input other character" << endl;
 	cout << endl << endl;
 	cin >> option;
 	if(option == '1')
 		PrintLoginUI();
 	else if(option == '2')
-		PrintLoginUI();
+		PrintRegisterUI();
 	else 
-		return;
+		exit(0);
 }
 
 void UI::PrintLoginUI(){
@@ -39,8 +39,8 @@ void UI::PrintLoginUI(){
 			cout << "input 1 to reinput borrowerid and correct, other character to exit " << endl;
 			cin >> option;
 		}else{
-			cout << "\t\t\tlog in successful" << endl;
-			cout << "\t\t\tWelcome to Library Management System" << "Mr./Mrs " << user.GetName() << endl;
+			cout << "\t\t\t\t\t\t\t\t\tlog in successful" << endl;
+			cout << "\t\t\t\t\t\t\t\t\tWelcome to Library Management System" << "Mr./Mrs " << user.GetName() << endl;
 			return;
 		}
 	}while(option == "1");
@@ -62,6 +62,7 @@ void UI::PrintRegisterUI(){
 	while(user.ExistData()){
 		cout << "please select other id, the id u input have existed" << endl;
 		cin >> borrowerid;
+		user.SetBorrowerId(borrowerid);
 	}
 	cout << "please input your password: " << endl;
 	cin >> password;
@@ -79,32 +80,32 @@ void UI::PrintRegisterUI(){
 	cin >> city;
 	user.SetCity(city);
 	user.StoreData();
-	cout << "\t\t\tRegister Success!" << endl;
+	cout << "\t\t\t\t\t\t\t\t\t\t\tRegister Success!" << endl;
 }
 
 void UI::PrintLeaveUI(){
-	cout << "--------------------------------------------"<< endl;
-	cout << "--------------------------------------------" << endl;
-	cout << "--------------------------------------------" << endl;
-	cout << "----------------------Bye-------------------" << endl;
-	cout << "--------------------------------------------"<< endl;
-	cout << "--------------------------------------------" << endl;
-	cout << "--------------------------------------------" << endl;
-	
+	cout << "\t\t\t\t\t\t\t\t\t\t--------------------------------------------"<< endl;
+	cout << "\t\t\t\t\t\t\t\t\t\t--------------------------------------------" << endl;
+	cout << "\t\t\t\t\t\t\t\t\t\t--------------------------------------------" << endl;
+	cout << "\t\t\t\t\t\t\t\t\t\t----------------------Bye-------------------" << endl;
+	cout << "\t\t\t\t\t\t\t\t\t\t--------------------------------------------"<< endl;
+	cout << "\t\t\t\t\t\t\t\t\t\t--------------------------------------------" << endl;
+	cout << "\t\t\t\t\t\t\t\t\t\t--------------------------------------------" << endl;
+	exit(0);	
 }
 
 void UI::PrintMainUI(){
 	char option;
 	do{
 		system("clear");
-		cout << "\t\t\tUser : " << user.GetName() << endl;
-		cout <<"\t\t\tthere are some operation you can do:" << endl;
-		cout <<"\t1. search book \t2. borrow book \t3. return book " << endl;
-		cout << "\t4. reserve book \t5. add title(m) \t6. delete Title(m) " << endl;
-		cout << "\t7. add item \t8. delete item(m) \t9. checkInfo" << endl;
-		cout << "\tq. quit" << endl;
-		cout << " caution: (m) means only manager can do this operation! " << endl;
-		cout << "please input number between 0 and 10 " << endl;
+		cout << "\t\t\t\t\t\t\t\t\t\t\t\t\tUser : " << user.GetName() << endl;
+		cout <<"\t\t\t\t\t\t\t\t\t\t\tthere are some operation you can do:" << endl;
+		cout <<"\t\t\t\t\t\t\t\t\t\t1. search book \t\t2. borrow book \t\t3. return book " << endl;
+		cout << "\t\t\t\t\t\t\t\t\t\t4. reserve book \t5. add title(m) \t6. delete Title(m) " << endl;
+		cout << "\t\t\t\t\t\t\t\t\t\t7. add item \t\t8. delete item(m) \t9. checkInfo" << endl;
+		cout << "\t\t\t\t\t\t\t\t\t\tq. quit" << endl;
+		cout << "Caution: (m) means only manager can do this operation! " << endl;
+		cout << "Please input number between 0 and 9 (or q)" << endl;
 		cin >> option;
 		switch(option){
 			case '1': 
@@ -132,6 +133,9 @@ void UI::PrintMainUI(){
 			    deleteItem();
 			    break;
 			case '9':
+			    checkInfo();
+			    break;
+			case 'q':
 			    break;
 			default:	
 			    cout << "please input number between 1 and 10 " << endl;
@@ -153,12 +157,13 @@ void UI::searchBook(){
 			cout << bookName <<  " doesn't exist" << endl;
 		}else{
 			title.LoadData();
-			cout << "\tbookName\tbookAuthor\tbookItem\tisBorrowed" << endl;
 			list<Item *> itemList;
 			title.GetItemList(itemList);
 			list<Item *>::iterator iter;
+			//cout << "the size of itemList is " << itemList.size() << endl;;
+			cout << "\tbookName\tbookAuthor\tbookItem\tisBorrowed" << endl;
 			for(iter = itemList.begin(); iter != itemList.end();++iter)
-				cout <<	"\t" << bookName << "\t" << title.GetAuthor() << "\t" << (*iter)->GetItemId() << "\t" << (*iter)->IsBorrowed() << endl;
+				cout <<	"\t" << bookName << "\t" << title.GetAuthor() << "\t\t" << (*iter)->GetItemId() << "\t\t" << (*iter)->IsBorrowed() << endl;
 		}
 		cout << "input 1 to continue searching, other to return to the main user interface. " << endl;
 		cin >> option;
@@ -166,7 +171,7 @@ void UI::searchBook(){
 }
 
 void UI::borrowBook(){
-	int itemid;
+	string itemid;
 	string option;
 	system("clear");
 	do{
@@ -194,7 +199,7 @@ void UI::borrowBook(){
 }
 
 void UI::returnBook(){
-	int itemid;
+	string itemid;
 	string option;
 	system("clear");
 	do{
@@ -205,7 +210,7 @@ void UI::returnBook(){
 		cout << "here is your borrow list :" << endl;
 		cout << "\ttitleName\titemid" << endl;
 		for(iter = loanList.begin();iter != loanList.end();++iter){
-			int itemid = (*iter)->GetItemId();
+			string itemid = (*iter)->GetItemId();
 			Item *i = new Item("",itemid);
 			i->LoadData();
 			cout <<"\t" << i->GetTitleName() <<"\t" << i->GetItemId() << endl; 
@@ -218,10 +223,16 @@ void UI::returnBook(){
 		if(!loan->ExistData()){
 			cout << "the itemid is not correct! " << endl;
 		}else{
-			if(loan->DeleteData())
-				cout << "successful! You have returned this book " << endl;
-			else
-				cout << "something goes wrong!" << endl;
+			//avoid people return book that don't belong to them
+			loan->LoadData();
+			if(loan->GetBorrowerId() == user.GetBorrowerId()){
+				if(loan->DeleteData())
+					cout << "successful! You have returned this book " << endl;
+				else
+					cout << "something goes wrong!" << endl;
+			}else{
+				cout << "you haven't borrowed this book, so you cann't return it" << endl;
+			}
 		}
 		delete loan;
 		cout << "input 1 to cotinue returning, other to return to the main user interface. " << endl;
@@ -242,12 +253,12 @@ void UI::reserveBook(){
 		}else{
 			Reservation *r = new Reservation(titleName,user.GetBorrowerId());
 			if(r->StoreData())
-				cout << "successful! You have borrowed your book " << endl;
+				cout << "successful! You have reserved your book " << endl;
 			else
 				cout << "something goes wrong!" << endl;
 			delete r;
 		}
-		cout << "input 1 to continue borrowing, other to return to the main user interface. " << endl;
+		cout << "input 1 to continue reservng, other to return to the main user interface. " << endl;
 		cin >> option;
 	}while(option == "1");
 }
@@ -273,7 +284,7 @@ void UI::addTitle(){
 				cin >> option;
 				while(option == 'y'){
 					cout << "please input the itemid"  << endl;
-					int itemid;
+					string itemid;
 					cin >> itemid;
 					Item * i = new Item(titleName,itemid);
 					t.AddItem(i);
@@ -297,6 +308,9 @@ void UI::addTitle(){
 		}while(option1 == '1');
 	}else{
 		cout << "you are not manager, you are not allowed to do this operation!" << endl;
+		cout << "input any key to return to the main user interface" << endl;
+		cin.get();
+		cin.get();
 	}
 }
 
@@ -324,6 +338,9 @@ void UI::deleteTitle(){
 		}while(option == "1");
 	}else{
 		cout << "you are not manager, you are not allowed to do this operation!" << endl;
+		cout << "input any key to return to the main user interface" << endl;
+		cin.get();
+		cin.get();
        	}
 }
 
@@ -331,7 +348,7 @@ void UI::addItem(){
 	string option;
 	if(user.GetIsManager()){
 		string titleName;
-		int itemid;
+		string itemid;
 		do{
 			system("clear");
 			cout << "please input the titleName to which you want to add item " << endl;
@@ -355,9 +372,13 @@ void UI::addItem(){
 				cout << "the titleName doesn't exist,you cannot add item to a title that doesn't exist" << endl;
 			}
 			cout << "input 1 to continue adding item,other character to return to the main user interface" << endl;
+			cin >> option;
 		}while(option == "1");
 	}else{
 		cout << "you are not manager, you are not allowed to do this operation!" << endl;
+		cout << "input any key to return to the main user interface" << endl;
+		cin.get();
+		cin.get();
        	}
 }
 
@@ -365,7 +386,7 @@ void UI::deleteItem(){
 	string option;
 	if(user.GetIsManager()){
 		string titleName;
-		int itemid;
+		string itemid;
 		do{
 			system("clear");
 			cout << "please input the titleName to which you want to delete item " << endl;
@@ -373,11 +394,11 @@ void UI::deleteItem(){
 			Title t = Title(titleName);
 			//check whether the title has existed
 			if(t.ExistData()){
-				cout << "please input the itemid which u want to delet" << endl;
+				cout << "please input the itemid which u want to delete" << endl;
 				cin >> itemid;
 				Item *i = new Item(titleName,itemid);
-				if(i->ExistData()){
-					cout << "this item has existed,you cannot add the same item" << endl;
+				if(!(i->ExistData())){
+					cout << "this item doesn't exist,you cannot delete the item" << endl;
 				}else{
 					if(i->DeleteData())
 						cout << "successful!" << endl;
@@ -386,13 +407,17 @@ void UI::deleteItem(){
 				}
 				delete i;
 			}else{
-				cout << "the titleName doesn't exist,you cannot add item to a title that doesn't exist" << endl;
+				cout << "the titleName doesn't exist,you cannot delete item to a title that doesn't exist" << endl;
 			}
 			cout << "input 1 to continue adding item,other character to return to the main user interface" << endl;
+			cin >> option;
 		}while(option == "1");
 
 	}else{
 		cout << "you are not manager, you are not allowed to do this operation!" << endl;
+		cout << "input any key to return to the main user interface" << endl;
+		cin.get();
+		cin.get();
        	}
 }
 
@@ -413,7 +438,7 @@ void UI::checkInfo(){
 	cout << "here is your borrow list :" << endl;
 	cout << "\ttitleName\titemid" << endl;
 	for(loanIter = loanList.begin();loanIter != loanList.end();++loanIter){
-		int itemid = (*loanIter)->GetItemId();
+		string itemid = (*loanIter)->GetItemId();
 		Item *i = new Item("",itemid);
 		i->LoadData();
 		cout <<"\t" << i->GetTitleName() <<"\t" << i->GetItemId() << endl; 
@@ -423,5 +448,8 @@ void UI::checkInfo(){
 	for(reseIter = reservationList.begin();reseIter != reservationList.end();++reseIter){
 		cout <<"\t" << (*reseIter)->GetTitleName() << endl; 
 	}
+	cout << endl;
 	cout << "input any key to return to the main user interface" << endl;
+	cin.get();
+	cin.get();
 }

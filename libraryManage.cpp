@@ -11,20 +11,6 @@ DBObject::DBObject(string DBNameString,string passwordString,int port){
 	m_DBNameString = DBNameString;
 	m_passwordString = passwordString;
 	m_port = port;
-	mysql_init(&mysql);
-	if(NULL == mysql_real_connect(
-			&mysql,
-			m_hostString.c_str(),
-			m_userString.c_str(),
-			m_passwordString.c_str(),
-			m_DBNameString.c_str(),
-			m_port,
-			NULL,
-			0
-		)){
-		SQLERROR();
-	}
-	std::cout << "the database is " << DBNameString << std::endl;
 	//to do 
 	//write the connect func in Constructor function is not a good idea
 	
@@ -49,17 +35,16 @@ bool DBObject::ExistData(){return true;}
 bool DBObject::LoadData(){return true;}
 
 DBObject::~DBObject(){
-	mysql_close(&mysql);
 }
 
 //Item-------------------------------------------------------------
-Item::Item(string titleName,int itemid):m_titleName(titleName),m_itemid(itemid){
+Item::Item(string titleName,string itemid):m_titleName(titleName),m_itemid(itemid){
 
 }
 
 bool Item::IsBorrowed() const{
 	string sql = "select * from loanTable where itemid = '";
-	sql = sql + to_string(m_itemid) + "';";
+	sql = sql + m_itemid + "';";
 	if(!mysql_query(&mysql,sql.c_str())){
 		MYSQL_RES *result = mysql_use_result(&mysql);
 		if(mysql_fetch_row(result) != NULL){ //there is a record in loan table
@@ -82,17 +67,17 @@ void Item::SetTitleName(string titleName){
 	m_titleName = titleName;
 }
 
-int Item::GetItemId() const{
+string Item::GetItemId() const{
 	return m_itemid;
 }
 
-void Item::SetItemId(int itemid){
+void Item::SetItemId(string itemid){
 	m_itemid = itemid;
 }
 
 bool Item::StoreData(){
-	string sql = "insert into itemTable(titleName,itemid) values('" + m_titleName + "','"+ to_string(m_itemid) + "');";
-	std::cout<< "in the itemTable" << std::endl;
+	string sql = "insert into itemTable(titleName,itemid) values('" + m_titleName + "','"+ m_itemid + "');";
+	//std::cout<< "in the itemTable" << std::endl;
 	
 	if(mysql_query(&mysql,sql.c_str())){ //a query error occur
 		SQLERROR();
@@ -101,7 +86,7 @@ bool Item::StoreData(){
 }
 
 bool Item::DeleteData(){
-	string sql = "delete from itemTable where itemid = '" + to_string(m_itemid) + "';";
+	string sql = "delete from itemTable where itemid = '" + m_itemid + "';";
 	if(ExistData()){ 
 		//now delete the record
 		if(IsBorrowed()){
@@ -119,7 +104,7 @@ bool Item::DeleteData(){
 }
 
 bool Item::UpdateData(){
-	string sqlUpdate = "update itemTable set titleName = '" + m_titleName + "',itemId = '" + to_string(m_itemid) + "' where itemid = '" + to_string(m_itemid) + "';";
+	string sqlUpdate = "update itemTable set titleName = '" + m_titleName + "',itemId = '" + m_itemid + "' where itemid = '" + m_itemid + "';";
 	if(ExistData()){ 
 		if(!mysql_query(&mysql,sqlUpdate.c_str())){
 			return true;
@@ -134,7 +119,7 @@ bool Item::UpdateData(){
 }	
 
 bool Item::ExistData(){
-	string sqlSearch = "select * from itemTable where itemid = '" + to_string(m_itemid) + "';";
+	string sqlSearch = "select * from itemTable where itemid = '" + m_itemid + "';";
 	if(!mysql_query(&mysql,sqlSearch.c_str())){ //a query error occur
 		MYSQL_RES * result = mysql_use_result(&mysql);		
 		if(mysql_fetch_row(result) != NULL){ //there is a record in loan table
@@ -155,7 +140,7 @@ bool Item::LoadData(){
 		return false;
 	}else{
 		//load Data in  loanTable
-		string sql = "select * from  itemTable where itemid = '" + to_string(m_itemid) + "';";
+		string sql = "select * from  itemTable where itemid = '" + m_itemid + "';";
 		if(!mysql_query(&mysql,sql.c_str())){ 
 			MYSQL_RES * result = mysql_use_result(&mysql);		
 			MYSQL_ROW row;
@@ -216,7 +201,7 @@ void Title::GetItemList(list<Item *> &itemList) const{
 	itemList = m_item;
 }
 
-Item * Title::GetItemWithId(int itemId) const{
+Item * Title::GetItemWithId(string itemId) const{
 	list<Item *>::const_iterator iter;
 	for(iter = m_item.begin();iter != m_item.end(); ++iter){
 		if((*iter)->GetItemId() == itemId)
@@ -248,12 +233,10 @@ bool Title::StoreData(){
 	}else{
 		//store data in titleTable
 		string sql = "insert into titleTable(titleName,author) values('" + m_name + "','"+ m_author + "');";
-		std::cout << "start insert into titleTable" << std::endl;
 		if(mysql_query(&mysql,sql.c_str())){ //a query error occur
 			SQLERROR();
 		}
 	//store data in itemTable
-		std::cout << "start insert into itemTable" << std::endl;
 		list<Item *>::iterator iter;
 		for(iter = m_item.begin();iter != m_item.end(); ++iter){
 			(*iter)->StoreData();	
@@ -263,7 +246,7 @@ bool Title::StoreData(){
 }
 
 bool Title::DeleteData(){
-	if(ExistData()){
+	if(!ExistData()){
 		std::cout << "there is no title name " << m_name << ", can not delete a title which doesn't exist" << std::endl;
 		return false;
 	}else{
@@ -318,7 +301,7 @@ bool Title::UpdateData(){
 
 bool Title::ExistData(){
 	string sqlSearch = "select * from titleTable where titleName = '" + m_name + "';";
-	std::cout <<sqlSearch << std::endl;
+	//std::cout <<sqlSearch << std::endl;
 	if(!mysql_query(&mysql,sqlSearch.c_str())){ 
 		MYSQL_RES * result = mysql_use_result(&mysql);		
 		if(mysql_fetch_row(result) != NULL){ //there is a record in loan table
@@ -342,13 +325,13 @@ bool Title::LoadData(){
 	}else{
 		//load Data in  titleTable
 		string sql = "select * from  titleTable where titleName = '" + m_name + "';";
+		//std::cout << sql;
 		if(!mysql_query(&mysql,sql.c_str())){ 
 			MYSQL_RES * result = mysql_use_result(&mysql);		
 			MYSQL_ROW row;
 			if((row = mysql_fetch_row(result)) != NULL){ //there is a record in loan table
 				m_author = row[1]; 
 				mysql_free_result(result);
-				return true;
 			}else{
 				mysql_free_result(result);
 				return false;
@@ -359,15 +342,23 @@ bool Title::LoadData(){
 		//load Data in  ItemTable
 		sql = "select * from  itemTable where titleName = '" + m_name + "';";
 		if(!mysql_query(&mysql,sql.c_str())){ 
-			MYSQL_RES * result = mysql_use_result(&mysql);		
+			MYSQL_RES * result = mysql_store_result(&mysql);		
 			MYSQL_ROW row;
+		//	std::cout << sql;
+			if(result == NULL)
+				std::cout << "result == NULL" << std::endl;
+			//std::cout << "the row's num is" << mysql_num_rows(result) << std::endl;
 			while((row = mysql_fetch_row(result)) != NULL){ //there is a record in loan table
-				std::cout << "row[0]: " << row[0] << "row[1]: " << row[1] << std::endl;
+			//	std::cout << "there is something in the itemTable;";
+			//	std::cout << "row[0]: " << row[0] << "row[1]: " << row[1] << std::endl;
 				//to do
 				//may cause memory linkage 
-				Item * i = new Item(row[0],atoi(row[1])); 
+				Item * i = new Item(row[0],row[1]); 
 				m_item.push_back(i);
 			}
+			//if(row == NULL){
+			//	SQLERROR();
+			//}
 				mysql_free_result(result);
 				return true;
 		}else{
@@ -384,15 +375,15 @@ Title::~Title(){
 }
 
 //Loan--------------------------------------------------------------
-Loan::Loan(int itemid,string borrowerid):m_itemid(itemid),m_borrowerid(borrowerid){
+Loan::Loan(string itemid,string borrowerid):m_itemid(itemid),m_borrowerid(borrowerid){
 
 }
 
-int Loan::GetItemId() const{
+string Loan::GetItemId() const{
 	return m_itemid;
 }
 
-void Loan::SetItemId(int itemid){
+void Loan::SetItemId(string itemid){
 	m_itemid = itemid;
 }
 
@@ -410,7 +401,7 @@ bool Loan::StoreData(){
 		return false;
 	}else{
 		//store data in titleTable
-		string sql = "insert into loanTable(itemid,borrowerid) values('" + to_string(m_itemid) + "','"+ m_borrowerid + "');";
+		string sql = "insert into loanTable(itemid,borrowerid) values('" + m_itemid + "','"+ m_borrowerid + "');";
 		if(mysql_query(&mysql,sql.c_str())){ //a query error occur
 			SQLERROR();
 		}
@@ -419,7 +410,7 @@ bool Loan::StoreData(){
 }
 
 bool Loan::DeleteData(){
-	string sql = "delete from loanTable where itemid = '" + to_string(m_itemid) + "';";
+	string sql = "delete from loanTable where itemid = '" + m_itemid + "';";
 	if(ExistData()){ 
 		//now delete the record
 		if(!mysql_query(&mysql,sql.c_str())){
@@ -439,7 +430,7 @@ bool Loan::UpdateData(){
 	return true;
 }
 bool Loan::ExistData(){
-	string sqlSearch = "select * from loanTable where itemid = '" + to_string(m_itemid) + "';";
+	string sqlSearch = "select * from loanTable where itemid = '" + m_itemid + "';";
 	if(!mysql_query(&mysql,sqlSearch.c_str())){ //a query error occur
 		MYSQL_RES * result = mysql_use_result(&mysql);		
 		if(mysql_fetch_row(result) != NULL){ //there is a record in loan table
@@ -460,7 +451,7 @@ bool Loan::LoadData(){
 		return false;
 	}else{
 		//load Data in  loanTable
-		string sql = "select * from  loanTable where itemid = '" + to_string(m_itemid) + "';";
+		string sql = "select * from  loanTable where itemid = '" + m_itemid + "';";
 		if(!mysql_query(&mysql,sql.c_str())){ 
 			MYSQL_RES * result = mysql_use_result(&mysql);		
 			MYSQL_ROW row;
@@ -576,6 +567,19 @@ bool Reservation::LoadData(){
 
 //Borrower----------------------------------------------------------------------
 Borrower::Borrower(string borrowerid,string password,string name,string sex,string address,string city):m_borrowerid(borrowerid),m_password(password),m_name(name),m_sex(sex),m_address(address),m_city(city){
+	mysql_init(&(DBObject::mysql));
+	if(NULL == mysql_real_connect(
+			&(DBObject::mysql),
+			DBObject::m_hostString.c_str(),
+			DBObject::m_userString.c_str(),
+			DBObject::m_passwordString.c_str(),
+			DBObject::m_DBNameString.c_str(),
+			DBObject::m_port,
+			NULL,
+			0
+		)){
+		SQLERROR();
+	}
 
 }
 
@@ -682,7 +686,7 @@ bool Borrower::StoreData(){
 		return false;
 	}else{
 		//store data in titleTable
-		string sql = "insert into borrowerTable(borrowerid,password,name,sex,address,city) values('" + m_borrowerid + "',sha1(''"+ m_password + "'),'"  + m_name + "','" + m_sex + "','" + m_address + "','" + m_city + "');";
+		string sql = "insert into borrowerTable(borrowerid,password,name,sex,address,city) values('" + m_borrowerid + "',sha1('"+ m_password + "'),'"  + m_name + "','" + m_sex + "','" + m_address + "','" + m_city + "');";
 		if(mysql_query(&mysql,sql.c_str())){ //a query error occur
 			SQLERROR();
 		}
@@ -698,11 +702,21 @@ bool Borrower::DeleteData(){
 	return true;
 }
 bool Borrower::UpdateData(){
-	//todo
-	return true;
+	string sql = "update borrowerTable set password = sha1('" + m_password + "',name = '" + m_name + "',sex = '" + m_sex + "',address = " + m_address + "',city = '" + m_city + "';";
+	if(ExistData()){ 
+		if(!mysql_query(&mysql,sql.c_str())){
+			return true;
+		}else{
+			SQLERROR();
+		}
+	}
+	else{ //can't find this item
+		std::cout << "there is not such a item in the database " << std::endl;
+		return false;
+	}
 }
 bool Borrower::ExistData(){
-	string sql = "update borrowerTable set password = sha1('" + m_password + "',name = '" + m_name + "',sex = '" + m_sex + "',address = " + m_address + "',city = '" + m_city + "';";
+	string sql = "select * from borrowerTable where borrowerid = '" + m_borrowerid + "';";
 	if(!mysql_query(&mysql,sql.c_str())){ //a query error occur
 		MYSQL_RES * result = mysql_use_result(&mysql);		
 		if(mysql_fetch_row(result) != NULL){ //there is a record in loan table
@@ -715,21 +729,23 @@ bool Borrower::ExistData(){
 	}else{
 		SQLERROR();
 	}
+
 }
 bool Borrower::LoadData(){
 	m_loans.clear();
 	m_reservations.clear();	
-	string sql = "select name,sex,address,city from borrowerTable where borrowerid = '" + m_borrowerid + "';";
+	string sql = "select name,sex,address,city,isManager from borrowerTable where borrowerid = '" + m_borrowerid + "';";
+//	std::cout << sql << std::endl;
 	if(!mysql_query(&mysql,sql.c_str())){ 
-		MYSQL_RES * result = mysql_use_result(&mysql);		
+		MYSQL_RES * result = mysql_store_result(&mysql);		
 		MYSQL_ROW row;
 		if((row = mysql_fetch_row(result)) != NULL){ //there is a record in loan table
 			m_name = row[0]; 
 			m_sex = row[1];
 			m_address = row[2];
 			m_city = row[3];
+			m_isManager = row[4];
 			mysql_free_result(result);
-			return true;
 		}else{
 			mysql_free_result(result);
 			return false;
@@ -738,27 +754,28 @@ bool Borrower::LoadData(){
 		SQLERROR();
 	}
 	sql = "select itemid from loanTable where borrowerid = '" + m_borrowerid + "';";
+//	std::cout << sql << std::endl;
 	if(!mysql_query(&mysql,sql.c_str())){
-		MYSQL_RES * result = mysql_use_result(&mysql);		
+		MYSQL_RES * result = mysql_store_result(&mysql);		
 		MYSQL_ROW row;
 		while((row = mysql_fetch_row(result)) != NULL){ //there is a record in loan table
-			std::cout << "row[0]: " << row[0] << std::endl;
+			//std::cout << "row[0]: " << row[0] << std::endl;
 			//to do
 			//may cause memory linkage 
-			Loan * i = new Loan(atoi(row[0]),GetBorrowerId()); 
+			Loan * i = new Loan(row[0],GetBorrowerId()); 
 			m_loans.push_back(i);
 		}
 		mysql_free_result(result);
-		return true;
 	}else{
 		SQLERROR();
 	}
 	sql = "select titleName from reservationTable where borrowerid = '" + m_borrowerid + "';";
+//	std::cout << sql << std::endl;
 	if(!mysql_query(&mysql,sql.c_str())){
 		MYSQL_RES * result = mysql_use_result(&mysql);		
 		MYSQL_ROW row;
 		while((row = mysql_fetch_row(result)) != NULL){ //there is a record in loan table
-			std::cout << "row[0]: " << row[0] << std::endl;
+			//std::cout << "row[0]: " << row[0] << std::endl;
 			//to do
 			//may cause memory linkage 
 			Reservation * r = new Reservation(row[0],GetBorrowerId()); 
@@ -769,11 +786,6 @@ bool Borrower::LoadData(){
 	}else{
 		SQLERROR();
 	}
-	
-
-
-	
-	return true;
 }	
 
 Borrower::~Borrower(){
@@ -785,4 +797,5 @@ Borrower::~Borrower(){
 	for(reseIter = m_reservations.begin();reseIter != m_reservations.end(); ++reseIter){
 		delete (*reseIter);
 	}
+	mysql_close(&(DBObject::mysql));
 }

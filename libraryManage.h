@@ -9,12 +9,12 @@ using std::list;
 using std::string;
 using std::to_string;
 class DBObject{
+protected:
 	static const string m_hostString;
 	static const string m_userString;
 	static string m_passwordString;
 	static string m_DBNameString;
 	static int m_port;
-protected:
 	static MYSQL mysql;
 public:
 	DBObject(string DBNameString = "Library",string passwordString="",int port = 3306);
@@ -31,14 +31,14 @@ public:
 	
 class Item : public DBObject{
 	string m_titleName;
-	int m_itemid;
+	string m_itemid;
 public:
-	Item(string titleName,int itemid);
+	Item(string titleName,string itemid);
 	bool IsBorrowed() const;
 	string GetTitleName() const;
 	void SetTitleName(string titleName);
-	int GetItemId() const;
-	void SetItemId(int itemid);
+	string GetItemId() const;
+	void SetItemId(string itemid);
 	virtual bool StoreData();
 	virtual bool DeleteData();
 	virtual bool UpdateData();
@@ -56,7 +56,7 @@ public:
 	void AddItem(Item * item);
 	void RemoveItem(Item * item);
 	void GetItemList(list<Item *> &itemList) const;
-	Item * GetItemWithId(int itemId) const;
+	Item * GetItemWithId(string itemId) const;
 	void SetName(string name);
 	string GetName() const;
 	void SetAuthor(string author);
@@ -70,12 +70,12 @@ public:
 };
 
 class Loan : public DBObject{
-	int m_itemid;
+	string m_itemid;
 	string m_borrowerid;
 public:
-	Loan(int itemid,string borrowerid);
-	int GetItemId() const;
-	void SetItemId(int itemid);
+	Loan(string itemid,string borrowerid);
+	string GetItemId() const;
+	void SetItemId(string itemid);
 	string GetBorrowerId() const;
 	void SetBorrowerId(string borrowerid);
 	virtual bool StoreData();
