@@ -4,4 +4,5 @@
 int main(){
 	UI::PrintStartUI();
 	UI::PrintMainUI();
+	UI::PrintLeaveUI();
 }		

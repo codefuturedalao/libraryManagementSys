@@ -101,11 +101,11 @@ void UI::PrintMainUI(){
 		cout << "\t\t\t\t\t\t\t\t\t\t\t\t\tUser : " << user.GetName() << endl;
 		cout <<"\t\t\t\t\t\t\t\t\t\t\tthere are some operation you can do:" << endl;
 		cout <<"\t\t\t\t\t\t\t\t\t\t1. search book \t\t2. borrow book \t\t3. return book " << endl;
-		cout << "\t\t\t\t\t\t\t\t\t\t4. reserve book \t5. add title(m) \t6. delete Title(m) " << endl;
-		cout << "\t\t\t\t\t\t\t\t\t\t7. add item \t\t8. delete item(m) \t9. checkInfo" << endl;
-		cout << "\t\t\t\t\t\t\t\t\t\tq. quit" << endl;
+		cout << "\t\t\t\t\t\t\t\t\t\t4. reserve book \t5. unreserve book \t6. add title(m)" << endl;
+		cout << "\t\t\t\t\t\t\t\t\t\t7. delete Title(m) \t8. add item \t\t9. delete item(m) " << endl;
+		cout << "\t\t\t\t\t\t\t\t\t\ta. checkInfo \t\tq. quit" << endl;
 		cout << "Caution: (m) means only manager can do this operation! " << endl;
-		cout << "Please input number between 0 and 9 (or q)" << endl;
+		cout << "Please input number between 0 and a (or q)" << endl;
 		cin >> option;
 		switch(option){
 			case '1': 
@@ -121,18 +121,21 @@ void UI::PrintMainUI(){
 			    reserveBook();
 			    break;
 			case '5':
+			    unreserveBook();
+		   	    break;
+			case '6':
 			    addTitle();
 			    break;
-			case '6':
+			case '7':
 			    deleteTitle();
 			    break;
-			case '7':
+			case '8':
 			    addItem();
 			    break;
-			case '8':
+			case '9':
 			    deleteItem();
 			    break;
-			case '9':
+			case 'a':
 			    checkInfo();
 			    break;
 			case 'q':
@@ -263,6 +266,32 @@ void UI::reserveBook(){
 	}while(option == "1");
 }
 
+void UI::unreserveBook(){
+	string titleName;
+	string option;
+	system("clear");
+	do{
+		cout << "please input the title's name that you want to unreserve" << endl;
+		cin >> titleName;
+		Title title = Title(titleName);
+		if(!title.ExistData()){
+			cout << "the book doesn't exist, please confirm the title's Name" << endl;
+		}else{
+			Reservation *r = new Reservation(titleName,user.GetBorrowerId());
+			if(r->GetBorrowerId() == user.GetBorrowerId()){
+				if(r->DeleteData())
+					cout << "successful! You have unreserved your book " << endl;
+				else
+					cout << "something goes wrong!" << endl;
+			}else{
+				cout << "this book is not in you reservation list, you cannot unreserve it" << endl;
+}
+			delete r;
+		}
+		cout << "input 1 to continue unreservng, other to return to the main user interface. " << endl;
+		cin >> option;
+	}while(option == "1");
+}
 void UI::addTitle(){
 	char option;
 	char option1;

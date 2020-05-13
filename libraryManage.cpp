@@ -506,7 +506,8 @@ bool Reservation::StoreData(){
 	
 }
 bool Reservation::DeleteData(){
-	string sql = "delete from loanTable where borrowerid = '" + m_borrowerid + "';";
+	string sql = "delete from reservationTable where borrowerid = '" + m_borrowerid + "' and titleName = '" + m_titleName + "';";
+	std::cout << sql << std::endl;
 	if(ExistData()){ 
 		//now delete the record
 		if(!mysql_query(&mysql,sql.c_str())){
@@ -525,7 +526,7 @@ bool Reservation::UpdateData(){
 	return true;
 }
 bool Reservation::ExistData(){
-	string sqlSearch = "select * from reservationTable where borrowerid = '" + m_borrowerid + "';";
+	string sqlSearch = "select * from reservationTable where borrowerid = '" + m_borrowerid + "' and titleName = '" + m_titleName + "';";
 	if(!mysql_query(&mysql,sqlSearch.c_str())){ //a query error occur
 		MYSQL_RES * result = mysql_use_result(&mysql);		
 		if(mysql_fetch_row(result) != NULL){ //there is a record in loan table
@@ -541,12 +542,13 @@ bool Reservation::ExistData(){
 
 }
 
+//do not use this function
 bool Reservation::LoadData(){
 	if(!ExistData()){
 		std::cout<<"you cann't load this reservation,this reservation doesn't exist" << std::endl;
 		return false;
 	}else{
-		//load Data in  loanTable
+		//load Data in  reservationTable
 		string sql = "select * from  reservationTable where borrowerid = '" + m_borrowerid + "';";
 		if(!mysql_query(&mysql,sql.c_str())){ 
 			MYSQL_RES * result = mysql_use_result(&mysql);		

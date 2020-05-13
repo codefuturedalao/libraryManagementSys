@@ -7,6 +7,7 @@ class UI{
 	static void borrowBook();
 	static void returnBook();
 	static void reserveBook();
+	static void unreserveBook();
 	static void addTitle();
 	static void deleteTitle();
 	static void addItem();
