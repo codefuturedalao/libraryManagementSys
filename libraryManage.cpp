@@ -257,7 +257,16 @@ bool Title::DeleteData(){
 		}
 		string sql = "delete from titleTable where titleName = '" + m_name + "';";
 		//second delete the item 
+		//use a loop to check if there is some item is borrowed
 		list<Item *>::iterator iter;
+		for(iter = m_item.begin();iter != m_item.end(); ++iter){
+			if((*iter)->IsBorrowed()){
+				std::cout << "can not delete item " << (*iter)->GetItemId() << " when delete title " << m_name << " because it is borrowed" <<  std::endl;	
+				return false;
+			}
+		}
+		//no items is borrowed, we're safe to delete them all
+		//caution: if we donnot use loop above, we may delete some item that are not borrowed, and save the item borrowed, that is weird if u delete a title and after causing an error u still have some item deleted.
 		for(iter = m_item.begin();iter != m_item.end(); ++iter){
 			if(!(*iter)->DeleteData()){
 				std::cout << "can not delete item " << (*iter)->GetItemId() << " when delete title " << m_name << std::endl;	
@@ -507,7 +516,7 @@ bool Reservation::StoreData(){
 }
 bool Reservation::DeleteData(){
 	string sql = "delete from reservationTable where borrowerid = '" + m_borrowerid + "' and titleName = '" + m_titleName + "';";
-	std::cout << sql << std::endl;
+	//std::cout << sql << std::endl;
 	if(ExistData()){ 
 		//now delete the record
 		if(!mysql_query(&mysql,sql.c_str())){

@@ -438,7 +438,7 @@ void UI::deleteItem(){
 			}else{
 				cout << "the titleName doesn't exist,you cannot delete item to a title that doesn't exist" << endl;
 			}
-			cout << "input 1 to continue adding item,other character to return to the main user interface" << endl;
+			cout << "input 1 to continue deleting item,other character to return to the main user interface" << endl;
 			cin >> option;
 		}while(option == "1");
 
