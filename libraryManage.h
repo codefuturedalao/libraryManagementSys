@@ -17,7 +17,7 @@ protected:
 	static int m_port;
 	static MYSQL mysql;
 public:
-	DBObject(string DBNameString = "Library",string passwordString="",int port = 3306);
+	DBObject(string DBNameString = "Library",string passwordString="root",int port = 3306);
 	static void SetPassword(string passwordString);
 	static void SetDBName(string DBNameString);
 	static void SetPort(int port);

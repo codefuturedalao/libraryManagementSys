@@ -1,5 +1,5 @@
 #include "libraryManage.h"
-const string DBObject::m_hostString = "localhost";
+const string DBObject::m_hostString = "120.78.180.234";
 const string DBObject::m_userString = "root";
 string DBObject::m_DBNameString;
 string DBObject::m_passwordString;
@@ -589,8 +589,10 @@ Borrower::Borrower(string borrowerid,string password,string name,string sex,stri
 			NULL,
 			0
 		)){
+//		printf("port = %d",DBObject::m_port);
 		SQLERROR();
 	}
+	
 
 }
 
