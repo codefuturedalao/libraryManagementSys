@@ -1,8 +1,11 @@
-#include "utility.h"
-#include "libraryManage.h"
+#include "mainwindow.h"
 
-int main(){
-	UI::PrintStartUI();
-	UI::PrintMainUI();
-	UI::PrintLeaveUI();
-}		
+#include <QApplication>
+
+int main(int argc, char *argv[])
+{
+    QApplication a(argc, argv);
+    MainWindow w;
+    w.show();
+    return a.exec();
+}

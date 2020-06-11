@@ -260,6 +260,7 @@ bool Title::DeleteData(){
 		//use a loop to check if there is some item is borrowed
 		list<Item *>::iterator iter;
 		for(iter = m_item.begin();iter != m_item.end(); ++iter){
+          //  std::cout <<
 			if((*iter)->IsBorrowed()){
 				std::cout << "can not delete item " << (*iter)->GetItemId() << " when delete title " << m_name << " because it is borrowed" <<  std::endl;	
 				return false;
@@ -589,7 +590,7 @@ Borrower::Borrower(string borrowerid,string password,string name,string sex,stri
 			NULL,
 			0
 		)){
-//		printf("port = %d",DBObject::m_port);
+        //printf("port = %d",DBObject::m_port);
 		SQLERROR();
 	}
 	
